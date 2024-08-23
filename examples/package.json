@@ -1,0 +1,22 @@
+{
+  "name": "examples",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "01_basic": "tsx 01_basic/index.ts",
+    "02_logging": "tsx 02_logging/index.ts",
+    "03_stages": "tsx 03_stages/index.ts",
+    "04_namespaces": "tsx 04_namespaces/index.ts",
+    "05_class_components": "tsx 05_class_components/index.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@hollymoon/container": "link:..",
+    "@types/node": "^20.14.12",
+    "tsx": "^4.16.2",
+    "typescript": "^5.5.4"
+  }
+}
