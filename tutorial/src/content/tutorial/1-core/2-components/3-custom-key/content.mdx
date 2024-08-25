@@ -1,0 +1,35 @@
+---
+type: lesson
+title: Custom key
+focus: /index.ts
+---
+
+# Custom key
+
+As we could see, we can use a function itself to retreive values from the container. But sometimes we'd like to use a custom key to inject a value.
+
+For example during testing it is useful to provide a mock with the key of the original service.
+
+We can do so by using the `provide` method.
+
+First let's create the mock:
+
+```typescript
+const mockMessageProvider = {
+    getMessage: (moduleName: string, message: string) => {
+        console.log("Mocked message provider called with", moduleName, message);
+    },
+};
+```
+
+Then we can provide this mock with the key of the original service.
+
+Notice that provider still accepts a builder as second paramenter. We need to return this value from an arrow function.
+
+```diff
+createContainer(
++   provide(MessageProvider, () => mockMessageProvider),
+-   MessageProvider
+```
+
+As you can see, we didn't need to change the runner, that could still get the MessageProvider, only it was different implementation.

@@ -1,0 +1,20 @@
+{
+  "name": "hollymoon-tutorial",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "start": "nodemon -e ts --exec 'tsx index.ts'"
+  },
+  "devDependencies": {
+    "nodemon": "3.1.4",
+    "tsx": "^4.16.2",
+    "typescript": "^5.5.4",
+    "@hollymoon/container": "^0.1.0"
+  },
+  "nodemonConfig": {
+    "delay": 400,
+    "events": {
+      "start": "clear"
+    }
+  }
+}
