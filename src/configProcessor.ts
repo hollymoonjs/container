@@ -20,7 +20,7 @@ export function processConfig(config: ComponentConfig): Array<Component<unknown>
         if (hasMetadata) {
             const metadata = ContainerMetadata.getMetadata(config);
             if (metadata.componentConverter) {
-                result.push(metadata.componentConverter(config as any));
+                result.push(...processConfig(metadata.componentConverter(config as any)));
             }
         } else {
             result.push({

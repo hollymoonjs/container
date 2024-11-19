@@ -1,4 +1,4 @@
-import { ComponentKey } from "../index";
+import { ComponentConfig, ComponentKey, ComponentRunner, init, run } from "../index";
 import { createComponentDecorator } from "./decoratorFactories";
 import { ContainerMetadata } from "./metadata";
 import { toComponent } from "./toComponent";
@@ -25,19 +25,15 @@ export function Init() {
     return function (ctx: any, name: string) {
         const metadata = ContainerMetadata.getMetadata(ctx.constructor);
 
-        metadata.initMethods.push(async (obj, container) => {
-            await obj[name](container);
-        });
+        metadata.runMethods.push({ runner: init, name });
     };
 }
 
-export function Run() {
+export function Run(runner?: (builder: ComponentRunner) => ComponentConfig) {
     return function (ctx: any, name: string) {
         const metadata = ContainerMetadata.getMetadata(ctx.constructor);
 
-        metadata.runMethods.push(async (obj, container) => {
-            await obj[name](container);
-        });
+        metadata.runMethods.push({ runner: runner ?? run, name });
     };
 }
 

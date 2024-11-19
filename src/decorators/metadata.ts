@@ -1,21 +1,22 @@
-import { ComponentKey, ReadyContainer, Container, Component } from "../types";
-import { Constructor } from "./types";
+import { ComponentKey, Container, ComponentRunner, ComponentConfig } from "../types";
+import { ComponentConverter } from "./decoratorFactories";
 
 export interface Injection {
     name: string;
     key: ComponentKey<unknown>;
 }
 
-export type MethodCaller = (obj: any, container: ReadyContainer | Container) => Promise<void>;
-
-export type ComponentConverter = (type: Constructor<any>) => Component<any>;
+export type BuildMethodCaller = (obj: any, container: Container) => Promise<void>;
 
 export class ContainerMetadata {
     componentConverter?: ComponentConverter;
     injections: Injection[] = [];
-    buildMethods: MethodCaller[] = [];
-    initMethods: MethodCaller[] = [];
-    runMethods: MethodCaller[] = [];
+
+    buildMethods: BuildMethodCaller[] = [];
+    runMethods: Array<{
+        runner: (builder: ComponentRunner) => ComponentConfig;
+        name: string;
+    }> = [];
 
     static getMetadata(cls: any): ContainerMetadata {
         cls.$$containerMetadata ||= new ContainerMetadata();
