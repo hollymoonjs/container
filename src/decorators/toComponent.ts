@@ -1,4 +1,4 @@
-import { Component, Container } from "../types";
+import { Component, Container, ReadyContainer } from "../types";
 import { ContainerMetadata } from "./metadata";
 import { Constructor } from "./types";
 
@@ -19,14 +19,14 @@ export function toComponent<T>(cls: Constructor<T>): Component<T> {
 
             return obj;
         },
-        async init(container: Container) {
-            const obj = await container.inject(cls);
+        async init(container: ReadyContainer) {
+            const obj = container.get(cls);
             for (const initMethod of metadata.initMethods) {
                 await initMethod(obj, container);
             }
         },
-        async run(container: Container) {
-            const obj = await container.inject(cls);
+        async run(container: ReadyContainer) {
+            const obj = container.get(cls);
             for (const runMethod of metadata.runMethods) {
                 await runMethod(obj, container);
             }

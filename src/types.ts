@@ -13,7 +13,7 @@ export type ComponentKey<T> = string | MarkerComponentKey<T> | ComponentClass<T>
 export type ComponentBuilder<T> = (container: Container) => Promise<T> | T;
 
 export type ConfigFunction = (container: Container) => Promise<void> | void;
-export type ComponentRunner = (container: Container) => Promise<void> | void;
+export type ComponentRunner = (container: ReadyContainer) => Promise<void> | void;
 
 export interface Component<T> {
     key: ComponentKey<T>;

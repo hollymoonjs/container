@@ -2,13 +2,7 @@ import { ComponentStore } from "./componentStore";
 import { processConfig } from "./configProcessor";
 import { createContainerConfig } from "./containerConfig";
 import { ComponentNotFoundError, NamespaceNotFoundError } from "./errors";
-import {
-    ComponentConfig,
-    ComponentKey,
-    ReadyContainer,
-    Namespace,
-    Container,
-} from "./types";
+import { ComponentConfig, ComponentKey, ReadyContainer, Namespace, Container } from "./types";
 
 function parseInjectArgs<T>(
     namespaceOrKey: Array<Namespace> | ComponentKey<T>,
@@ -24,18 +18,13 @@ function parseInjectArgs<T>(
     return [namespaces, key];
 }
 
-export async function createContainer(
-    ...components: Array<ComponentConfig>
-): Promise<ReadyContainer> {
+export async function createContainer(...components: Array<ComponentConfig>): Promise<ReadyContainer> {
     const componentStore = new ComponentStore();
     const resolvedComponentStore = new ComponentStore();
 
     const container: Container = {
         config: createContainerConfig(),
-        inject: async <T>(
-            namespaceOrKey: Array<Namespace> | ComponentKey<T>,
-            _key?: ComponentKey<T>
-        ) => {
+        inject: async <T>(namespaceOrKey: Array<Namespace> | ComponentKey<T>, _key?: ComponentKey<T>) => {
             const [namespaces, key] = parseInjectArgs(namespaceOrKey, _key);
 
             if (namespaces.length === 0) {
@@ -78,13 +67,12 @@ export async function createContainer(
 
                 return value!;
             } else {
-                const namespace: ReadyContainer | undefined =
-                    await container.inject(namespaces[0]);
+                const namespace: ReadyContainer | undefined = await container.inject(namespaces[0]);
                 if (!namespace) {
                     throw new NamespaceNotFoundError(key);
                 }
 
-                return await namespace.get(namespaces.slice(1), key);
+                return namespace.get(namespaces.slice(1), key);
             }
         },
     };
@@ -106,39 +94,9 @@ export async function createContainer(
     }
 
     const config = container.config;
-    for (const component of processedComponents) {
-        if (component.init) {
-            for (const beforeComponentInit of config.beforeComponentInit) {
-                await beforeComponentInit(container, component);
-            }
-
-            await component.init(container);
-
-            for (const afterComponentInit of config.afterComponentInit) {
-                await afterComponentInit(container, component);
-            }
-        }
-    }
-
-    for (const component of processedComponents) {
-        if (component.run) {
-            for (const beforeComponentRun of config.beforeComponentRun) {
-                await beforeComponentRun(container, component);
-            }
-
-            await component.run(container);
-
-            for (const afterComponentRun of config.afterComponentRun) {
-                await afterComponentRun(container, component);
-            }
-        }
-    }
 
     const readyContainer: ReadyContainer = {
-        get: <T>(
-            namespaceOrKey: Array<Namespace> | ComponentKey<T>,
-            _key?: ComponentKey<T>
-        ) => {
+        get: <T>(namespaceOrKey: Array<Namespace> | ComponentKey<T>, _key?: ComponentKey<T>) => {
             const [namespaces, key] = parseInjectArgs(namespaceOrKey, _key);
 
             if (namespaces.length === 0) {
@@ -149,8 +107,7 @@ export async function createContainer(
 
                 return component.value!;
             } else {
-                const namespace: ReadyContainer | undefined =
-                    readyContainer.get(namespaces[0]);
+                const namespace: ReadyContainer | undefined = readyContainer.get(namespaces[0]);
                 if (!namespace) {
                     throw new NamespaceNotFoundError(key);
                 }
@@ -159,6 +116,34 @@ export async function createContainer(
             }
         },
     };
+
+    for (const component of processedComponents) {
+        if (component.init) {
+            for (const beforeComponentInit of config.beforeComponentInit) {
+                await beforeComponentInit(readyContainer, component);
+            }
+
+            await component.init(readyContainer);
+
+            for (const afterComponentInit of config.afterComponentInit) {
+                await afterComponentInit(readyContainer, component);
+            }
+        }
+    }
+
+    for (const component of processedComponents) {
+        if (component.run) {
+            for (const beforeComponentRun of config.beforeComponentRun) {
+                await beforeComponentRun(readyContainer, component);
+            }
+
+            await component.run(readyContainer);
+
+            for (const afterComponentRun of config.afterComponentRun) {
+                await afterComponentRun(readyContainer, component);
+            }
+        }
+    }
 
     return readyContainer;
 }

@@ -23,8 +23,8 @@ async function Module1({ inject }: Container) {
 }
 
 createContainer(
-    run(async ({ inject }: Container) => {
-        const module1 = await inject(Module1);
+    run(async ({ get }) => {
+        const module1 = get(Module1);
 
         await module1.log();
     }),

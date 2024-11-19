@@ -1,11 +1,4 @@
-import {
-    ComponentKey,
-    Container,
-    createContainer,
-    namespace,
-    provide,
-    run,
-} from "@hollymoon/container";
+import { ComponentKey, createContainer, namespace, provide, run } from "@hollymoon/container";
 
 interface Config {
     name: string;
@@ -13,8 +6,8 @@ interface Config {
 
 const configKey: ComponentKey<Config> = Symbol("config");
 
-const printName = run(async ({ inject }: Container) => {
-    const config = await inject(configKey);
+const printName = run(({ get }) => {
+    const config = get(configKey);
     console.log("Running:", config.name);
 });
 
@@ -47,8 +40,8 @@ createContainer(
         name: "Root namespace",
     })),
     printName,
-    run(async ({ inject }: Container) => {
-        const innerConfig = await inject([namespace2, namespace2_1], configKey);
+    run(async ({ get }) => {
+        const innerConfig = get([namespace2, namespace2_1], configKey);
 
         console.log("Inner config:", innerConfig.name);
     })

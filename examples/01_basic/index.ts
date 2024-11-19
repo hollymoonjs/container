@@ -1,13 +1,13 @@
-import { Container, createContainer, run } from "@hollymoon/container";
+import { Container, createContainer, ReadyContainer, run } from "@hollymoon/container";
 import * as core from "./core";
 import * as user from "./user";
 
 createContainer(
     core,
     user,
-    run(async ({ inject }: Container) => {
-        const userRepository = await inject(user.UserRepository);
-        const userService = await inject(user.UserService);
+    run(async ({ get }: ReadyContainer) => {
+        const userRepository = get(user.UserRepository);
+        const userService = get(user.UserService);
 
         await userService.register({
             email: "john.doe@example.com",

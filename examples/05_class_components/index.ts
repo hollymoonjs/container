@@ -12,7 +12,7 @@ function LogService() {
 @Injectable()
 class HelloWorldService {
     @Inject(LogService)
-    private logService: ReturnType<typeof LogService> = null!;
+    private logService!: ReturnType<typeof LogService>;
 
     print() {
         this.logService.log("HelloWorld", "Hello world!");
@@ -22,8 +22,8 @@ class HelloWorldService {
 createContainer(
     HelloWorldService,
     LogService,
-    run(async ({ inject }) => {
-        const helloWorldService = await inject(HelloWorldService);
+    run(async ({ get }) => {
+        const helloWorldService = get(HelloWorldService);
         helloWorldService.print();
     })
 );

@@ -1,4 +1,4 @@
-import { Component, ComponentRunner, Container } from "../types";
+import { Component, ComponentRunner, ReadyContainer } from "../types";
 
 export type StageConfig = (runner: ComponentRunner) => Component<void>;
 
@@ -6,13 +6,11 @@ export type Stages<T extends Array<string>> = {
     [K in T[number]]: StageConfig;
 };
 
-export function createStages<TStages extends Array<string>>(
-    ...stages: TStages
-): Stages<TStages> {
+export function createStages<TStages extends Array<string>>(...stages: TStages): Stages<TStages> {
     let stageRunners: Record<string, ComponentRunner[]> = {};
 
     let ran = false;
-    async function runStages(container: Container) {
+    async function runStages(container: ReadyContainer) {
         if (ran) {
             return;
         }
