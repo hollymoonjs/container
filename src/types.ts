@@ -8,12 +8,7 @@ export interface ComponentClass<T> {
 
 export interface MarkerComponentKey<T> extends Symbol {}
 
-export type ComponentKey<T> =
-    | string
-    | MarkerComponentKey<T>
-    | ComponentClass<T>
-    | ComponentBuilder<T>
-    | Component<T>;
+export type ComponentKey<T> = string | MarkerComponentKey<T> | ComponentClass<T> | ComponentBuilder<T> | Component<T>;
 
 export type ComponentBuilder<T> = (container: Container) => Promise<T> | T;
 
@@ -29,11 +24,7 @@ export interface Component<T> {
     run?: ComponentRunner;
 }
 
-export type ComponentType<T extends Component<unknown>> = T extends Component<
-    infer U
->
-    ? U
-    : never;
+export type ComponentType<T extends Component<unknown>> = T extends Component<infer U> ? U : never;
 
 export interface Container {
     config: ContainerConfig;
@@ -48,6 +39,7 @@ export interface ReadyContainer {
 
 export type ComponentConfig =
     | Component<unknown>
+    | ComponentClass<unknown>
     | ComponentBuilder<unknown>
     | Array<ComponentConfig>
     | { [key: string]: ComponentConfig };

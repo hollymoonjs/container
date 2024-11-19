@@ -1,5 +1,7 @@
 import { ComponentKey } from "../index";
+import { createComponentDecorator } from "./decoratorFactories";
 import { ContainerMetadata } from "./metadata";
+import { toComponent } from "./toComponent";
 
 export function Inject<T>(componentKey: ComponentKey<T>) {
     return function (ctx: any, name: string) {
@@ -38,3 +40,5 @@ export function Run() {
         });
     };
 }
+
+export const Injectable = createComponentDecorator(() => toComponent);

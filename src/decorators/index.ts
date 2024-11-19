@@ -1,2 +1,3 @@
-export { toConfigurator } from "./configurator";
-export { Build, Init, Inject, Run } from "./decorators";
+export { Build, Init, Inject, Run, Injectable } from "./decorators";
+export { createComponentDecorator } from "./decoratorFactories";
+export { toComponent } from "./toComponent";

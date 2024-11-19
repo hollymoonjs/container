@@ -1,4 +1,4 @@
-import { toConfigurator, Inject, Build } from "@hollymoon/container/decorators";
+import { Inject, Injectable } from "@hollymoon/container/decorators";
 import { createContainer, run } from "@hollymoon/container";
 
 function LogService() {
@@ -9,18 +9,21 @@ function LogService() {
     };
 }
 
+@Injectable()
 class HelloWorldService {
     @Inject(LogService)
     private logService: ReturnType<typeof LogService> = null!;
-
-    @Build()
-    async build() {
-        this.print();
-    }
 
     print() {
         this.logService.log("HelloWorld", "Hello world!");
     }
 }
 
-createContainer(toConfigurator(HelloWorldService), LogService);
+createContainer(
+    HelloWorldService,
+    LogService,
+    run(async ({ inject }) => {
+        const helloWorldService = await inject(HelloWorldService);
+        helloWorldService.print();
+    })
+);

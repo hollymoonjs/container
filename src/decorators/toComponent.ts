@@ -2,7 +2,7 @@ import { Component, Container } from "../types";
 import { ContainerMetadata } from "./metadata";
 import { Constructor } from "./types";
 
-export function toConfigurator<T>(cls: Constructor<T>): Component<T> {
+export function toComponent<T>(cls: Constructor<T>): Component<T> {
     const metadata = ContainerMetadata.getMetadata(cls);
 
     return {
