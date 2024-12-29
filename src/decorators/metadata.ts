@@ -1,4 +1,9 @@
-import { ComponentKey, Container, ComponentRunner, ComponentConfig } from "../types";
+import {
+    ComponentKey,
+    Container,
+    ComponentRunner,
+    ComponentConfig,
+} from "../types";
 import { ComponentConverter } from "./decoratorFactories";
 
 export interface Injection {
@@ -6,7 +11,10 @@ export interface Injection {
     key: ComponentKey<unknown>;
 }
 
-export type BuildMethodCaller = (obj: any, container: Container) => Promise<void>;
+export type BuildMethodCaller = (
+    obj: any,
+    container: Container
+) => Promise<void>;
 
 export class ContainerMetadata {
     componentConverter?: ComponentConverter;
@@ -25,6 +33,6 @@ export class ContainerMetadata {
     }
 
     static hasMetadata(cls: any): boolean {
-        return cls.$$containerMetadata instanceof ContainerMetadata;
+        return "$$containerMetadata" in cls;
     }
 }
