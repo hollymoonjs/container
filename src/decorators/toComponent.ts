@@ -1,6 +1,7 @@
 import { ComponentConfig, Container } from "../types";
 import { ContainerMetadata } from "./metadata";
 import { Constructor } from "./types";
+import { wire } from "./wire";
 
 export function toComponent(cls: Constructor<any>): ComponentConfig {
     const metadata = ContainerMetadata.getMetadata(cls);
@@ -8,10 +9,7 @@ export function toComponent(cls: Constructor<any>): ComponentConfig {
     const component = {
         key: cls,
         async build(container: Container) {
-            const obj: any = new cls();
-            for (const injection of metadata.injections) {
-                obj[injection.name] = await container.inject(injection.key);
-            }
+            const obj = await wire(container, new cls());
 
             for (const buildMethod of metadata.buildMethods) {
                 await buildMethod(obj, container);
