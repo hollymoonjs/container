@@ -3,17 +3,24 @@ import { ContainerConfig } from "./containerConfig";
 export type Namespace = Component<ReadyContainer>;
 
 export interface ComponentClass<T> {
-    new (): T;
+    new (...args: any[]): T;
 }
 
 export interface MarkerComponentKey<T> extends Symbol {}
 
-export type ComponentKey<T> = string | MarkerComponentKey<T> | ComponentClass<T> | ComponentBuilder<T> | Component<T>;
+export type ComponentKey<T> =
+    | string
+    | MarkerComponentKey<T>
+    | ComponentClass<T>
+    | ComponentBuilder<T>
+    | Component<T>;
 
 export type ComponentBuilder<T> = (container: Container) => Promise<T> | T;
 
 export type ConfigFunction = (container: Container) => Promise<void> | void;
-export type ComponentRunner = (container: ReadyContainer) => Promise<void> | void;
+export type ComponentRunner = (
+    container: ReadyContainer
+) => Promise<void> | void;
 
 export interface Component<T> {
     key: ComponentKey<T>;
@@ -24,7 +31,11 @@ export interface Component<T> {
     run?: ComponentRunner;
 }
 
-export type ComponentType<T extends Component<unknown>> = T extends Component<infer U> ? U : never;
+export type ComponentType<T extends Component<unknown>> = T extends Component<
+    infer U
+>
+    ? U
+    : never;
 
 export interface Container {
     config: ContainerConfig;

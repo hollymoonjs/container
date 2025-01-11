@@ -6,6 +6,10 @@ import {
 } from "../types";
 import { ComponentConverter } from "./decoratorFactories";
 
+export type ConstructorParameterBuilder = (
+    container: Container
+) => Promise<any>;
+
 export interface Injection {
     name: string;
     key: ComponentKey<unknown>;
@@ -18,6 +22,9 @@ export type BuildMethodCaller = (
 
 export class ContainerMetadata {
     componentConverter?: ComponentConverter;
+
+    constructorParams: Array<ConstructorParameterBuilder | null> = [];
+
     injections: Injection[] = [];
 
     buildMethods: BuildMethodCaller[] = [];

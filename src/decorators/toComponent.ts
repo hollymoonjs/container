@@ -9,7 +9,15 @@ export function toComponent(cls: Constructor<any>): ComponentConfig {
     const component = {
         key: cls,
         async build(container: Container) {
-            const obj = await wire(container, new cls());
+            const params = [];
+            for (const builder of metadata.constructorParams) {
+                if (!builder) {
+                    throw new Error(`Unknown parameter for ${cls.name}`);
+                }
+                params.push(await builder(container));
+            }
+
+            const obj = await wire(container, new cls(...params));
 
             for (const buildMethod of metadata.buildMethods) {
                 await buildMethod(obj, container);
