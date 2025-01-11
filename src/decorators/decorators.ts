@@ -2,10 +2,16 @@ import {
     ComponentConfig,
     ComponentKey,
     ComponentRunner,
+    Container,
     init,
+    ReadyContainer,
     run,
 } from "../index";
-import { createComponentDecorator } from "./decoratorFactories";
+import {
+    createBuildDecorator,
+    createComponentDecorator,
+} from "./decoratorFactories";
+import { MethodsWithSignature } from "./helpers";
 import { ContainerMetadata } from "./metadata";
 import { toComponent } from "./toComponent";
 
@@ -39,29 +45,44 @@ export function Inject<T>(componentKey: ComponentKey<T>) {
     return decorator;
 }
 
-export function Build() {
-    return function (ctx: any, name: string) {
+export function Build<
+    TCtx extends object,
+    TName extends MethodsWithSignature<
+        TCtx,
+        (container: Container) => void | Promise<void>
+    >
+>() {
+    return createBuildDecorator<TCtx, TName>((fn, container) => fn(container));
+}
+
+export function Init<
+    TCtx extends object,
+    TName extends MethodsWithSignature<
+        TCtx,
+        (container: ReadyContainer) => void | Promise<void>
+    >
+>() {
+    return function (ctx: TCtx, name: TName) {
         const metadata = ContainerMetadata.getMetadata(ctx.constructor);
 
-        metadata.buildMethods.push(async (obj, container) => {
-            await obj[name](container);
+        metadata.runMethods.push({ runner: init, name: name as string });
+    };
+}
+
+export function Run<
+    TCtx extends object,
+    TName extends MethodsWithSignature<
+        TCtx,
+        (container: ReadyContainer) => void | Promise<void>
+    >
+>(runner?: (builder: ComponentRunner) => ComponentConfig) {
+    return function (ctx: TCtx, name: TName) {
+        const metadata = ContainerMetadata.getMetadata(ctx.constructor);
+
+        metadata.runMethods.push({
+            runner: runner ?? run,
+            name: name as string,
         });
-    };
-}
-
-export function Init() {
-    return function (ctx: any, name: string) {
-        const metadata = ContainerMetadata.getMetadata(ctx.constructor);
-
-        metadata.runMethods.push({ runner: init, name });
-    };
-}
-
-export function Run(runner?: (builder: ComponentRunner) => ComponentConfig) {
-    return function (ctx: any, name: string) {
-        const metadata = ContainerMetadata.getMetadata(ctx.constructor);
-
-        metadata.runMethods.push({ runner: runner ?? run, name });
     };
 }
 
