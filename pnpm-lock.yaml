@@ -7,6 +7,10 @@ settings:
 importers:
 
   .:
+    dependencies:
+      '@hollymoon/common':
+        specifier: ^0.3.2
+        version: 0.3.2
     devDependencies:
       '@types/node':
         specifier: ^20.4.2
@@ -166,6 +170,9 @@ packages:
     engines: {node: '>=12'}
     cpu: [x64]
     os: [win32]
+
+  '@hollymoon/common@0.3.2':
+    resolution: {integrity: sha512-clyHDs38oFFEyqU+jewYrfDKZkErco3N4rveLHu6aCuCM3F7oXoRJT9+MS5vQMfUhWjBTxFZ3KtggZGsC1d1Ug==}
 
   '@isaacs/cliui@8.0.2':
     resolution: {integrity: sha512-O8jcjabXaleOG9DQ0+ARXWZBTfnP4WNAqzuiJK7ll44AmxGKv/J2M4TPjxjY3znBCfvBXFzucm1twdyFybFqEA==}
@@ -745,6 +752,8 @@ snapshots:
 
   '@esbuild/win32-x64@0.21.5':
     optional: true
+
+  '@hollymoon/common@0.3.2': {}
 
   '@isaacs/cliui@8.0.2':
     dependencies:
