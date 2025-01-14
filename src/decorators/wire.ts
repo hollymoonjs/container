@@ -19,7 +19,7 @@ export function wire<T extends object>(
 
         for (const key in obj) {
             const value = (obj as any)[key];
-            if (typeof value === "object" && "$$inject" in value) {
+            if (value && typeof value === "object" && "$$inject" in value) {
                 (obj as any)[key] = container.get(
                     value.$$inject as ComponentKey<any>
                 );
@@ -39,7 +39,7 @@ export function wire<T extends object>(
 
             for (const key in obj) {
                 const value = (obj as any)[key];
-                if (typeof value === "object" && "$$inject" in value) {
+                if (value && typeof value === "object" && "$$inject" in value) {
                     (obj as any)[key] = await container.inject(
                         value.$$inject as ComponentKey<any>
                     );
