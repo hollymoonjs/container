@@ -22,11 +22,8 @@ export type BuildMethod = (
     component: any
 ) => Promise<void>;
 
-export function createBuildDecorator<
-    TCtx extends object = any,
-    TName extends keyof TCtx = any
->(builder: BuildMethod) {
-    return function (ctx: TCtx, name: TName) {
+export function createBuildDecorator(builder: BuildMethod) {
+    return function (ctx: object, name: any) {
         const metadata = ContainerMetadata.getMetadata(ctx.constructor);
 
         metadata.buildMethods.push(async (obj, container) => {

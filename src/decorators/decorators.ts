@@ -2,16 +2,13 @@ import {
     ComponentConfig,
     ComponentKey,
     ComponentRunner,
-    Container,
     init,
-    ReadyContainer,
     run,
 } from "../index";
 import {
     createBuildDecorator,
     createComponentDecorator,
 } from "./decoratorFactories";
-import { MethodsWithSignature } from "./helpers";
 import { ContainerMetadata } from "./metadata";
 import { toComponent } from "./toComponent";
 
@@ -45,38 +42,20 @@ export function Inject<T>(componentKey: ComponentKey<T>) {
     return decorator;
 }
 
-export function Build<
-    TCtx extends object,
-    TName extends MethodsWithSignature<
-        TCtx,
-        (container: Container) => void | Promise<void>
-    >
->() {
-    return createBuildDecorator<TCtx, TName>((fn, container) => fn(container));
+export function Build() {
+    return createBuildDecorator((fn, container) => fn(container));
 }
 
-export function Init<
-    TCtx extends object,
-    TName extends MethodsWithSignature<
-        TCtx,
-        (container: ReadyContainer) => void | Promise<void>
-    >
->() {
-    return function (ctx: TCtx, name: TName) {
+export function Init() {
+    return function (ctx: object, name: any) {
         const metadata = ContainerMetadata.getMetadata(ctx.constructor);
 
         metadata.runMethods.push({ runner: init, name: name as string });
     };
 }
 
-export function Run<
-    TCtx extends object,
-    TName extends MethodsWithSignature<
-        TCtx,
-        (container: ReadyContainer) => void | Promise<void>
-    >
->(runner?: (builder: ComponentRunner) => ComponentConfig) {
-    return function (ctx: TCtx, name: TName) {
+export function Run(runner?: (builder: ComponentRunner) => ComponentConfig) {
+    return function (ctx: object, name: any) {
         const metadata = ContainerMetadata.getMetadata(ctx.constructor);
 
         metadata.runMethods.push({

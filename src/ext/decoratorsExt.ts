@@ -4,24 +4,16 @@ import {
     SyncEventHandlers,
 } from "@hollymoon/common";
 import { createBuildDecorator } from "../decorators/decoratorFactories";
-import { MethodsWithSignature } from "../decorators/helpers";
 
 type AnyEvent<TArgs extends unknown[]> =
     | AsyncEventHandlers<TArgs>
     | SyncEventHandlers<TArgs>;
-type AnyEventGetter<TArgs extends unknown[], TCtx> = (
-    obj: TCtx
-) => AnyEvent<TArgs>;
+type AnyEventGetter<TArgs extends unknown[]> = (obj: object) => AnyEvent<TArgs>;
 
-export function OnEvent<
-    TArgs extends unknown[],
-    TCtx extends object,
-    TName extends MethodsWithSignature<
-        TCtx,
-        (...args: TArgs) => void | Promise<void>
-    >
->(getter: AnyEventGetter<TArgs, TCtx>) {
-    return createBuildDecorator<TCtx, TName>(async (fn, _, obj) => {
+export function OnEvent<TArgs extends unknown[]>(
+    getter: AnyEventGetter<TArgs>
+) {
+    return createBuildDecorator(async (fn, _, obj) => {
         const event = getter(obj);
         event.on(fn as any);
     });
@@ -31,14 +23,13 @@ export interface OnReactiveChangeOptions {
     immediate?: boolean;
 }
 
-type ReactiveGetter<T, TCtx> = (obj: TCtx) => ReadableReactive<T>;
+type ReactiveGetter<T> = (obj: object) => ReadableReactive<T>;
 
-export function OnReactiveChange<
-    T,
-    TCtx extends object,
-    TName extends MethodsWithSignature<TCtx, (value: T) => void | Promise<void>>
->(getter: ReactiveGetter<T, TCtx>, options?: OnReactiveChangeOptions) {
-    return createBuildDecorator<TCtx, TName>(async (fn, _, obj) => {
+export function OnReactiveChange<T>(
+    getter: ReactiveGetter<T>,
+    options?: OnReactiveChangeOptions
+) {
+    return createBuildDecorator(async (fn, _, obj) => {
         const reactive = getter(obj);
 
         reactive.changeEvent.on(fn as any);

@@ -1,4 +1,4 @@
-import { Inject, Injectable } from "@hollymoon/container/decorators";
+import { Build, Inject, Injectable } from "@hollymoon/container/decorators";
 import { createContainer, run } from "@hollymoon/container";
 
 function LogService() {
