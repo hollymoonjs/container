@@ -22,11 +22,6 @@
             "types": "./lib/decorators/index.d.ts",
             "import": "./lib/decorators/index.js",
             "require": "./lib/decorators/index.js"
-        },
-        "./ext": {
-            "types": "./lib/ext/index.d.ts",
-            "import": "./lib/ext/index.js",
-            "require": "./lib/ext/index.js"
         }
     },
     "files": [
