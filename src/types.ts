@@ -15,6 +15,12 @@ export type ComponentKey<T> =
     | ComponentBuilder<T>
     | Component<T>;
 
+export type InjectType<T extends ComponentKey<any>> = T extends ComponentKey<
+    infer U
+>
+    ? U
+    : never;
+
 export type ComponentBuilder<T> = (container: Container) => Promise<T> | T;
 
 export type ConfigFunction = (container: Container) => Promise<void> | void;
