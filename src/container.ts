@@ -52,6 +52,9 @@ export async function createContainer(
                 // TODO: Check for circular dependencies
                 let component = componentStore.get(key);
                 if (!component) {
+                    if (container.config.parent) {
+                        return container.config.parent.get(key);
+                    }
                     throw new ComponentNotFoundError(key);
                 }
 
@@ -126,6 +129,10 @@ export async function createContainer(
             if (namespaces.length === 0) {
                 let component = resolvedComponentStore.get(key);
                 if (!component) {
+                    if (container.config.parent) {
+                        return container.config.parent.get(key);
+                    }
+
                     throw new ComponentNotFoundError(key);
                 }
 

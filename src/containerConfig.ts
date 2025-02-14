@@ -12,6 +12,8 @@ export type InjectHook<T> = (
 ) => void;
 
 export class ContainerConfig {
+    parent?: ReadyContainer;
+
     beforeComponentBuild: Array<ComponentHook<unknown>> = [];
     afterComponentBuild: Array<ComponentHook<unknown>> = [];
     beforeComponentInit: Array<ComponentHook<unknown>> = [];

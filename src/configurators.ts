@@ -5,6 +5,8 @@ import {
     ComponentKey,
     ComponentRunner,
     ConfigFunction,
+    Container,
+    ReadyContainer,
 } from "./types";
 
 export function provide<T>(
@@ -57,6 +59,12 @@ export function destroy(runner: ComponentRunner): Component<void> {
         key: Symbol("destroy"),
         destroy: runner,
     };
+}
+
+export function parent(parent: ReadyContainer) {
+    return containerConfig((container) => {
+        container.config.parent = parent;
+    });
 }
 
 export function defineConfig(...configs: ComponentConfig[]) {
