@@ -1,8 +1,15 @@
 import { ComponentStore } from "./componentStore";
 import { processConfig } from "./configProcessor";
 import { createContainerConfig } from "./containerConfig";
+import { currentContainer } from "./currentContainer";
 import { ComponentNotFoundError, NamespaceNotFoundError } from "./errors";
-import { ComponentConfig, ComponentKey, ReadyContainer, Namespace, Container } from "./types";
+import {
+    ComponentConfig,
+    ComponentKey,
+    ReadyContainer,
+    Namespace,
+    Container,
+} from "./types";
 
 function parseInjectArgs<T>(
     namespaceOrKey: Array<Namespace> | ComponentKey<T>,
@@ -18,13 +25,18 @@ function parseInjectArgs<T>(
     return [namespaces, key];
 }
 
-export async function createContainer(...components: Array<ComponentConfig>): Promise<ReadyContainer> {
+export async function createContainer(
+    ...components: Array<ComponentConfig>
+): Promise<ReadyContainer> {
     const componentStore = new ComponentStore();
     const resolvedComponentStore = new ComponentStore();
 
     const container: Container = {
         config: createContainerConfig(),
-        inject: async <T>(namespaceOrKey: Array<Namespace> | ComponentKey<T>, _key?: ComponentKey<T>) => {
+        inject: async <T>(
+            namespaceOrKey: Array<Namespace> | ComponentKey<T>,
+            _key?: ComponentKey<T>
+        ) => {
             const [namespaces, key] = parseInjectArgs(namespaceOrKey, _key);
 
             if (namespaces.length === 0) {
@@ -67,7 +79,8 @@ export async function createContainer(...components: Array<ComponentConfig>): Pr
 
                 return value!;
             } else {
-                const namespace: ReadyContainer | undefined = await container.inject(namespaces[0]);
+                const namespace: ReadyContainer | undefined =
+                    await container.inject(namespaces[0]);
                 if (!namespace) {
                     throw new NamespaceNotFoundError(key);
                 }
@@ -77,7 +90,7 @@ export async function createContainer(...components: Array<ComponentConfig>): Pr
         },
     };
 
-    const processedComponents = processConfig(components);
+    const processedComponents = processConfig([components, currentContainer]);
 
     for (const component of processedComponents) {
         if (component.config) {
@@ -96,7 +109,10 @@ export async function createContainer(...components: Array<ComponentConfig>): Pr
     const config = container.config;
 
     const readyContainer: ReadyContainer = {
-        get: <T>(namespaceOrKey: Array<Namespace> | ComponentKey<T>, _key?: ComponentKey<T>) => {
+        get: <T>(
+            namespaceOrKey: Array<Namespace> | ComponentKey<T>,
+            _key?: ComponentKey<T>
+        ) => {
             const [namespaces, key] = parseInjectArgs(namespaceOrKey, _key);
 
             if (namespaces.length === 0) {
@@ -107,7 +123,8 @@ export async function createContainer(...components: Array<ComponentConfig>): Pr
 
                 return component.value!;
             } else {
-                const namespace: ReadyContainer | undefined = readyContainer.get(namespaces[0]);
+                const namespace: ReadyContainer | undefined =
+                    readyContainer.get(namespaces[0]);
                 if (!namespace) {
                     throw new NamespaceNotFoundError(key);
                 }
