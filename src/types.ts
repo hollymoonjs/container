@@ -29,12 +29,14 @@ export type ComponentRunner = (
 ) => Promise<void> | void;
 
 export interface Component<T> {
+    $$hollymoonComponent: true;
     key: ComponentKey<T>;
     config?: ConfigFunction;
     build?: ComponentBuilder<T>;
     value?: T;
     init?: ComponentRunner;
     run?: ComponentRunner;
+    destroy?: ComponentRunner;
 }
 
 export type ComponentType<T extends Component<unknown>> = T extends Component<
@@ -52,6 +54,7 @@ export interface Container {
 export interface ReadyContainer {
     get<T>(namespace: Array<Namespace>, key: ComponentKey<T>): T;
     get<T>(key: ComponentKey<T>): T;
+    destroy(): Promise<void>;
 }
 
 export type ComponentConfig =

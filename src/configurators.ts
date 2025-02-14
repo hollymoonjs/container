@@ -24,11 +24,12 @@ export function provide<T>(
         key = Symbol("anonymous");
     }
 
-    return { key, build: builder };
+    return { $$hollymoonComponent: true, key, build: builder };
 }
 
 export function run(runner: ComponentRunner): Component<void> {
     return {
+        $$hollymoonComponent: true,
         key: Symbol("run"),
         run: runner,
     };
@@ -36,6 +37,7 @@ export function run(runner: ComponentRunner): Component<void> {
 
 export function init(runner: ComponentRunner): Component<void> {
     return {
+        $$hollymoonComponent: true,
         key: Symbol("init"),
         init: runner,
     };
@@ -43,8 +45,17 @@ export function init(runner: ComponentRunner): Component<void> {
 
 export function containerConfig(configure: ConfigFunction): Component<void> {
     return {
+        $$hollymoonComponent: true,
         key: Symbol("config"),
         config: configure,
+    };
+}
+
+export function destroy(runner: ComponentRunner): Component<void> {
+    return {
+        $$hollymoonComponent: true,
+        key: Symbol("destroy"),
+        destroy: runner,
     };
 }
 

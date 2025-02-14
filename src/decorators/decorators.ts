@@ -2,6 +2,7 @@ import {
     ComponentConfig,
     ComponentKey,
     ComponentRunner,
+    destroy,
     init,
     run,
 } from "../index";
@@ -60,6 +61,17 @@ export function Run(runner?: (builder: ComponentRunner) => ComponentConfig) {
 
         metadata.runMethods.push({
             runner: runner ?? run,
+            name: name as string,
+        });
+    };
+}
+
+export function Destroy() {
+    return function (ctx: object, name: any) {
+        const metadata = ContainerMetadata.getMetadata(ctx.constructor);
+
+        metadata.runMethods.push({
+            runner: destroy,
             name: name as string,
         });
     };

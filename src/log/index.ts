@@ -46,4 +46,20 @@ export const log = () =>
                 `[HMC] Component "${componentKeyToString(component.key)}" ran`
             );
         });
+
+        container.config.beforeDestroy.push(async (_, component) => {
+            console.log(
+                `[HMC] Destroying component "${componentKeyToString(
+                    component.key
+                )}"`
+            );
+        });
+
+        container.config.afterDestroy.push(async (_, component) => {
+            console.log(
+                `[HMC] Component "${componentKeyToString(
+                    component.key
+                )}" destroyed`
+            );
+        });
     });

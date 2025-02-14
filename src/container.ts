@@ -1,6 +1,6 @@
 import { ComponentStore } from "./componentStore";
 import { processConfig } from "./configProcessor";
-import { createContainerConfig } from "./containerConfig";
+import { ContainerConfig } from "./containerConfig";
 import { currentContainer } from "./currentContainer";
 import { ComponentNotFoundError, NamespaceNotFoundError } from "./errors";
 import {
@@ -30,13 +30,17 @@ export async function createContainer(
 ): Promise<ReadyContainer> {
     const componentStore = new ComponentStore();
     const resolvedComponentStore = new ComponentStore();
+    let destroyed = false;
 
     const container: Container = {
-        config: createContainerConfig(),
+        config: new ContainerConfig(),
         inject: async <T>(
             namespaceOrKey: Array<Namespace> | ComponentKey<T>,
             _key?: ComponentKey<T>
         ) => {
+            if (destroyed) {
+                throw new Error("Container has been destroyed");
+            }
             const [namespaces, key] = parseInjectArgs(namespaceOrKey, _key);
 
             if (namespaces.length === 0) {
@@ -108,11 +112,15 @@ export async function createContainer(
 
     const config = container.config;
 
+    let destroying = false;
     const readyContainer: ReadyContainer = {
         get: <T>(
             namespaceOrKey: Array<Namespace> | ComponentKey<T>,
             _key?: ComponentKey<T>
         ) => {
+            if (destroyed) {
+                throw new Error("Container has been destroyed");
+            }
             const [namespaces, key] = parseInjectArgs(namespaceOrKey, _key);
 
             if (namespaces.length === 0) {
@@ -131,6 +139,33 @@ export async function createContainer(
 
                 return namespace.get(namespaces.slice(1), key);
             }
+        },
+        destroy: async () => {
+            if (destroyed) {
+                throw new Error("Container has been destroyed");
+            }
+            if (destroying) {
+                return;
+            }
+            destroying = true;
+
+            for (const component of resolvedComponentStore.list()) {
+                if (!component.destroy) {
+                    continue;
+                }
+
+                for (const beforeDestroy of config.beforeDestroy) {
+                    beforeDestroy(readyContainer, component);
+                }
+
+                await component.destroy(readyContainer);
+
+                for (const afterDestroy of config.afterDestroy) {
+                    afterDestroy(readyContainer, component);
+                }
+            }
+
+            destroyed = true;
         },
     };
 

@@ -2,7 +2,9 @@ import { ContainerMetadata } from "./decorators/metadata";
 import { isComponent } from "./helpers";
 import { Component, ComponentBuilder, ComponentConfig } from "./types";
 
-export function processConfig(config: ComponentConfig): Array<Component<unknown>> {
+export function processConfig(
+    config: ComponentConfig
+): Array<Component<unknown>> {
     let result: Array<Component<unknown>> = [];
 
     if (Array.isArray(config)) {
@@ -20,10 +22,13 @@ export function processConfig(config: ComponentConfig): Array<Component<unknown>
         if (hasMetadata) {
             const metadata = ContainerMetadata.getMetadata(config);
             if (metadata.componentConverter) {
-                result.push(...processConfig(metadata.componentConverter(config as any)));
+                result.push(
+                    ...processConfig(metadata.componentConverter(config as any))
+                );
             }
         } else {
             result.push({
+                $$hollymoonComponent: true,
                 key: config,
                 build: config as ComponentBuilder<unknown>,
             });

@@ -1,4 +1,4 @@
-import { ComponentConfig, Container } from "../types";
+import { Component, ComponentConfig, Container } from "../types";
 import { ContainerMetadata } from "./metadata";
 import { Constructor } from "./types";
 import { wire } from "./wire";
@@ -6,7 +6,8 @@ import { wire } from "./wire";
 export function toComponent(cls: Constructor<any>): ComponentConfig {
     const metadata = ContainerMetadata.getMetadata(cls);
 
-    const component = {
+    const component: Component<any> = {
+        $$hollymoonComponent: true,
         key: cls,
         async build(container: Container) {
             const params = [];

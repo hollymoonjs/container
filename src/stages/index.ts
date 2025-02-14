@@ -6,7 +6,9 @@ export type Stages<T extends Array<string>> = {
     [K in T[number]]: StageConfig;
 };
 
-export function createStages<TStages extends Array<string>>(...stages: TStages): Stages<TStages> {
+export function createStages<TStages extends Array<string>>(
+    ...stages: TStages
+): Stages<TStages> {
     let stageRunners: Record<string, ComponentRunner[]> = {};
 
     let ran = false;
@@ -32,6 +34,7 @@ export function createStages<TStages extends Array<string>>(...stages: TStages):
     for (const stage of stages) {
         stageConfig[stage] = (runner) => {
             return {
+                $$hollymoonComponent: true,
                 key: Symbol(stage),
                 init: async () => {
                     stageRunners[stage] ||= [];

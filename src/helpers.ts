@@ -23,19 +23,10 @@ export function isComponent(value: unknown): value is Component<unknown> {
         return false;
     }
 
-    if ("config" in value && typeof value.config === "function") {
-        return true;
-    }
-
-    if ("build" in value && typeof value.build === "function") {
-        return true;
-    }
-
-    if ("init" in value && typeof value.init === "function") {
-        return true;
-    }
-
-    if ("run" in value && typeof value.run === "function") {
+    if (
+        "$$hollymoonComponent" in value &&
+        value["$$hollymoonComponent"] === true
+    ) {
         return true;
     }
 

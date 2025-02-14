@@ -11,27 +11,17 @@ export type InjectHook<T> = (
     component: Component<T>
 ) => void;
 
-export interface ContainerConfig {
-    beforeComponentBuild: Array<ComponentHook<unknown>>;
-    afterComponentBuild: Array<ComponentHook<unknown>>;
-    beforeComponentInit: Array<ComponentHook<unknown>>;
-    afterComponentInit: Array<ComponentHook<unknown>>;
-    beforeComponentRun: Array<ComponentHook<unknown>>;
-    afterComponentRun: Array<ComponentHook<unknown>>;
+export class ContainerConfig {
+    beforeComponentBuild: Array<ComponentHook<unknown>> = [];
+    afterComponentBuild: Array<ComponentHook<unknown>> = [];
+    beforeComponentInit: Array<ComponentHook<unknown>> = [];
+    afterComponentInit: Array<ComponentHook<unknown>> = [];
+    beforeComponentRun: Array<ComponentHook<unknown>> = [];
+    afterComponentRun: Array<ComponentHook<unknown>> = [];
 
-    beforeInject: Array<InjectHook<unknown>>;
-    afterInject: Array<InjectHook<unknown>>;
-}
+    beforeInject: Array<InjectHook<unknown>> = [];
+    afterInject: Array<InjectHook<unknown>> = [];
 
-export function createContainerConfig(): ContainerConfig {
-    return {
-        beforeComponentBuild: [],
-        afterComponentBuild: [],
-        beforeComponentInit: [],
-        afterComponentInit: [],
-        beforeComponentRun: [],
-        afterComponentRun: [],
-        beforeInject: [],
-        afterInject: [],
-    };
+    beforeDestroy: Array<ComponentHook<unknown>> = [];
+    afterDestroy: Array<ComponentHook<unknown>> = [];
 }
