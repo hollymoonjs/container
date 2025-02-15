@@ -21,7 +21,7 @@ export function Inject<T>(componentKey: ComponentKey<T>) {
         name: string | undefined,
         parameterIndex?: number
     ) {
-        if (typeof name === "string" && typeof parameterIndex === "undefined") {
+        if (typeof name === "string" && typeof parameterIndex !== "number") {
             const metadata = ContainerMetadata.getMetadata(ctx.constructor);
             metadata.injections.push({ name, key: componentKey });
         } else if (typeof parameterIndex === "number") {
